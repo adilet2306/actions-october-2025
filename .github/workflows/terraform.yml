@@ -12,6 +12,24 @@ on:
         - apply
         - destroy
 
+      region:
+        description: "Select your region"
+        required: true
+        type: choice
+        options:
+        - us-east-1
+        - us-east-2
+
+      ami_id:
+        description: "Provide AMI id"
+        required: true
+        type: string
+
+      instance_type:
+        description: "Provide instance type"
+        required: true
+        type: string
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,6 +37,14 @@ jobs:
     steps:
       - name: Git clone
         uses: actions/checkout@v4
+
+      - name: Create tfvars file
+        run: |
+          cat <<EOF > terraform.tfvars
+          region = "${{ inputs.region }}"
+          ami_id = "${{ inputs.ami_id }}"
+          instance_type = "${{ inputs.instance_type }}"
+          EOF
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
